@@ -1,16 +1,10 @@
 import streamlit as st
-import cv2
-import mediapipe as mp
 import random
-import numpy as np
-
-# MediaPipeの設定
-mp_face_mesh = mp.solutions.face_mesh
-face_mesh = mp_face_mesh.FaceMesh(refine_landmarks=True)
+from PIL import Image
 
 st.title("笑顔を作るアプリ 😊")
 
-# ジクさんの現在のファイル名に合わせました
+# ファイル名はジクさんの今の数字の名前に合わせました
 images = {
     "cry": "1775726161579 (1).png",
     "pout": "1775726161579 (2).png",
@@ -23,27 +17,29 @@ images = {
 if 'last_status' not in st.session_state:
     st.session_state.last_status = "pout"
 
+# カメラ入力（Streamlit標準機能のみ使用）
 img_file_buffer = st.camera_input("カメラに向かって笑ってね！")
 
 if img_file_buffer is not None:
-    file_bytes = np.asarray(bytearray(img_file_buffer.read()), dtype=np.uint8)
-    frame = cv2.imdecode(file_bytes, 1)
-    
-    # 簡易的な判定ロジック
+    # ここではAI判定を簡略化し、撮影するたびに「気まぐれ」で変わるようにします
     val = random.random()
     if val > 0.7:
         status = "laugh"
     elif val > 0.4:
         status = "smile"
-    elif val < 0.1:
-        status = "confused"
+    elif val < 0.2:
+        status = "cry"
     else:
         status = "pout"
     
     st.session_state.last_status = status
 
-# 赤ちゃんを表示
-st.image(images[st.session_state.last_status], use_column_width=True)
+# 赤ちゃんの画像を表示
+try:
+    image = Image.open(images[st.session_state.last_status])
+    st.image(image, use_container_width=True)
+except Exception as e:
+    st.error(f"画像が見つかりません: {st.session_state.last_status}")
 
 if st.session_state.last_status == "laugh":
     st.balloons()

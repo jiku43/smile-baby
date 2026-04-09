@@ -51,10 +51,10 @@ if img_file_buffer is not None:
 
     # 3. 数値に基づいて表情を決定（閾値は要調整）
     # 一般的に、笑顔だと顔のパーツが動くため、std_devが少し上がる傾向があります。
-    # 以下の数値（100, 70）は目安です。ジクさんの環境に合わせて調整が必要です。
-    if std_dev > 100:
+    # 以下の数値（60, 40）は目安です。ジクさんの環境に合わせて調整が必要です。
+    if std_dev > 60:
         status = "laugh"
-    elif std_dev > 70:
+    elif std_dev > 40:
         status = "smile"
     elif std_dev < 30:
         # あまりに動きがない＝怒り/無表情
